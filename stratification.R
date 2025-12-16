@@ -61,7 +61,6 @@ totalsample$number
 barplot <- function(data, variable, title){
   ggplot(data, aes({{variable}})) +
     geom_bar()+
-    stat_n_text() +
     ggtitle(title)
 }
 barplot(totalsample, adult_crown_class, "crown class of proposed sample")
@@ -84,3 +83,4 @@ ggplot() +
 
 #produce a csv of which trees to sample
 write.csv(totalsample, "proposed_sample_ILM_assoc_trees.csv")
+
