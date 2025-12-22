@@ -6,5 +6,6 @@ General workflow I used:
 2. Source DataSplitter, the code that creates smaller datasheets with subsets of data (ex. only the live adult trees, only the trees at a certain site) so that they can be analyzed individually.
 3. Source ChartBuilder, the code that creates functions for commonly used graphics (ex. boxplots with significance testing, maps, etc.) so that they can be generated with one line of code, increasing efficiency and readability of code.
 4. Run code that actually analyzes the data!  Answer these questions:
-	a. Where are butternuts doing well?  Where are they regenerating?
-	b. What ecological factors are associated with canker development and spread?
+	a. Where are butternuts doing well?  Where are they regenerating? (mapping.R)
+	b. How are butternut seedlings doing?  What factors contribute to successful seedling establishment? (seedlings.R)
+	c. What ecological factors are associated with canker development and spread?
