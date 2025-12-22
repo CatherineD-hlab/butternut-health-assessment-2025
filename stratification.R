@@ -1,5 +1,8 @@
+#Catherine dell'Olio
 # This code allows me to select a stratified sample from the ILM adult butternuts based on health (both % girdle and % live canopy, in a 3x3 subgroup stratification for high, medium, and low health in both metrics independently.)
 #After I generated a sample from this code, I then tested its representativeness of the pool of eligible adult butternuts in terms of spatial extent and crown class.
+#I call the package dpylr to filter my data with its syntax
+#I call one datasheet: ILM_assoc_trees, which is just a datasheet of all the ILM trees.  Alternatively, this can be run with the full datasheet.csv filtered by site == "ILM".
 
 #setting working directory
 setwd("~/dataviz_cfd")
@@ -55,9 +58,10 @@ r9 <- randomsample(cat9, 6)
 totalsample <- rbind(r1, r2,r3, r4, r5, r6, r7, r8, r9)
 #retrieve tree IDs for the proposed sample
 totalsample$number
+#This gives me the list of trees to sample at ILM for the associate trees analysis!
 
 #TESTING FOR REPRESENTATIVENESS
-#does this sample consist of mostly similar proportions of trees in each crown class as the eligible population?
+#does this sample consist of mostly similar proportions of trees in each crown class as the eligible population?  Trees of different crown classes receive different amounts of light which might really impact our analysis.
 barplot <- function(data, variable, title){
   ggplot(data, aes({{variable}})) +
     geom_bar()+
@@ -83,4 +87,3 @@ ggplot() +
 
 #produce a csv of which trees to sample
 write.csv(totalsample, "proposed_sample_ILM_assoc_trees.csv")
-
