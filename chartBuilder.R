@@ -1,5 +1,12 @@
+#Catherine dell'Olio
+#This code creates functions to make the most common plots I use (maps, histograms, boxplots, barplots, and scatterplots) much more streamlined.  Instead of making tweaks each time in ggplots, here I have a standardized way to make plots of different butternuts and their health attributes.
+#I use two packages here---ggplots2 and EnvStats (which allows me to add in stats like n= values to bar and boxplots).
+#I do not call any datasheets in this code.
+
 #Making charts
 install.packages("ggplot2")
+install.packages("EnvStats")
+library(EnvStats)
 library(ggplot2)
 
 #spatial visualization
@@ -13,15 +20,19 @@ histogram <- function(data, metric, binzwidth, title)
   ggplot(data, aes({{ metric }})) +
   geom_histogram(bins = binzwidth) +
   ggtitle(title)
+
 boxplot <- function(data, plot_division, metric, title){
   ggplot(data, aes(x=factor({{plot_division}}), y={{metric}})) +
     geom_boxplot(alpha = 0, aes(color = {{plot_division}})) +
     geom_jitter(height = 0, alpha = 0.25, size = 0.5, width = 0.3) +
+    stat_n_text() +
     ggtitle(title)
 }
+
 barplot <- function(data, variable, title){
   ggplot(data, aes({{variable}})) +
     geom_bar()+
+    stat_n_text() +
     ggtitle(title)
 }
 
