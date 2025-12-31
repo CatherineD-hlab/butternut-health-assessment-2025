@@ -5,18 +5,18 @@
 #I call one datasheet: ILM_assoc_trees, which is just a datasheet of all the ILM trees.  Alternatively, this can be run with the full datasheet.csv filtered by site == "ILM".
 
 #setting working directory
-set.seed(1111)
+set.seed(111)
 setwd("~/dataviz_cfd")
 df <- read.csv("ILM_assoc_trees.csv")
 library(dplyr)
 
 #filter to eligible butternuts: adults with DBH greater than 4.5 cm and less than 50 cm
 adults_df <- df %>% filter(seedling_or_adult == "Adult")
-adults_df <- adults_df %>% filter(number != "212" | number != "314" | number != "309" | number != "428" | number != "387" | number != "041")
+adults_df <- adults_df %>% filter(number != "212" & number != "314" & number != "309" & number != "428" & number != "387" & number != "041")
 adults_df <- adults_df %>% filter(dbh_cm >= 4.5)
 adults_df <- adults_df %>% filter(dbh_cm <=50)
 #excluding trees in agricultural lands
-adults_df <- adults_df %>% filter(number != "193" | number != "424" | number != "425" | number != "119" | number != "120")
+adults_df <- adults_df %>% filter(number != "193" & number != "424" & number != "425" & number != 119 & number != 120)
 
 #creating the subgroups:
 #health is represented by two metrics: girdle percentage and percent live canopy
@@ -60,7 +60,7 @@ totalsample <- data.frame()
 adults_remaining <- adults_df
 
 #RUN FROM HERE TO DASHED LINE AS MANY TIMES AS NEEDED TO CREATE A SAMPLE OF THE DESIRED SIZE (in my case, 13 times to get a sample of 52).  This builds the sample by selecting one tree from each category, checking to exclude any very nearby trees to the selected one that now would be spatially autocorrelated with it, and filtering the remaining trees to only the ones that are still eligible (that is, not too close to any of the previously selected trees).
-set.seed(1111)
+set.seed(111)
 t1 <- randomsample(cat1, 1)
 adults_cycle <- data.frame()
 for (i in 1:nrow(adults_remaining)){
@@ -70,7 +70,7 @@ for (i in 1:nrow(adults_remaining)){
 }
 adults_remaining <- adults_cycle
 totalsample <- rbind(totalsample, t1)
-set.seed(1111)
+set.seed(111)
 t1 <- randomsample(cat2, 1)
 adults_cycle <- data.frame()
 for (i in 1:nrow(adults_remaining)){
@@ -80,7 +80,7 @@ for (i in 1:nrow(adults_remaining)){
 }
 adults_remaining <- adults_cycle
 totalsample <- rbind(totalsample, t1)
-set.seed(1111)
+set.seed(111)
 t1 <- randomsample(cat3, 1)
 adults_cycle <- data.frame()
 for (i in 1:nrow(adults_remaining)){
@@ -90,7 +90,7 @@ for (i in 1:nrow(adults_remaining)){
 }
 adults_remaining <- adults_cycle
 totalsample <- rbind(totalsample, t1)
-set.seed(1111)
+set.seed(111)
 t1 <- randomsample(cat4, 1)
 adults_cycle <- data.frame()
 for (i in 1:nrow(adults_remaining)){
@@ -101,10 +101,10 @@ for (i in 1:nrow(adults_remaining)){
 adults_remaining <- adults_cycle
 totalsample <- rbind(totalsample, t1)
 ggplot() +
-  geom_point(data = adults_df, aes(gps_w, gps_n), colour="yellow2") +
-  geom_point(data = adults_remaining, aes(gps_w, gps_n), colour="green2") +
-  geom_point(data = totalsample, aes(gps_w, gps_n), colour="red") +
-  ggtitle("Remaining eligible adults (green) with sample (red) and excluded autocorrelated trees (yellow)")
+  geom_point(data = adults_df, aes(gps_w, gps_n), colour="#FDE000") +
+  geom_point(data = adults_remaining, aes(gps_w, gps_n), colour="#3B528B") +
+  geom_point(data = totalsample, aes(gps_w, gps_n), colour="#5EC962") +
+  ggtitle("Remaining eligible adults (yellow) with sample (green) and excluded autocorrelated trees (blue)")
 
 cat1 <- adults_remaining %>%  filter(adult_percent_live_canopy <= 70 & live_adult_girdle <= 50) #low canopy low girdle (dying of other causes)
 cat2 <- adults_remaining %>%  filter(adult_percent_live_canopy <= 70 & live_adult_girdle > 50) #low canopy high girdle (dying of canker)
