@@ -5,14 +5,14 @@
 #I call one datasheet: ILM_assoc_trees, which is just a datasheet of all the ILM trees.  Alternatively, this can be run with the full datasheet.csv filtered by site == "ILM".
 
 #setting working directory
-set.seed(111)
+set.seed(5005)
 setwd("~/dataviz_cfd")
 df <- read.csv("ILM_assoc_trees.csv")
 library(dplyr)
 
 #filter to eligible butternuts: adults with DBH greater than 4.5 cm and less than 50 cm
 adults_df <- df %>% filter(seedling_or_adult == "Adult")
-adults_df <- adults_df %>% filter(number != "212" & number != "314" & number != "309" & number != "428" & number != "387" & number != "041")
+adults_df <- adults_df %>% filter(number != "212" & number != "314" & number != "309" & number != "428" & number != "387" & number != "041" & number != "558" & number != "001" & number != "544")
 adults_df <- adults_df %>% filter(dbh_cm >= 4.5)
 adults_df <- adults_df %>% filter(dbh_cm <=50)
 #excluding trees in agricultural lands
@@ -43,7 +43,7 @@ randomsample <- function(cat, size){
   return(cat[s,])
 }
 
-#we need to figure out a way to have the computer only select trees that are more than about 10-15 meters apart
+#we need to figure out a way to have the computer only select trees that are more than 20 meters apart (2 radii)
 #shout out rodrigo on stack overflow for this function: https://stackoverflow.com/questions/639695/how-to-convert-latitude-or-longitude-to-meters
 measure <- function(lon1,lat1,lon2,lat2) {
   R <- 6378.137                                # radius of earth in Km
@@ -60,41 +60,41 @@ totalsample <- data.frame()
 adults_remaining <- adults_df
 
 #RUN FROM HERE TO DASHED LINE AS MANY TIMES AS NEEDED TO CREATE A SAMPLE OF THE DESIRED SIZE (in my case, 13 times to get a sample of 52).  This builds the sample by selecting one tree from each category, checking to exclude any very nearby trees to the selected one that now would be spatially autocorrelated with it, and filtering the remaining trees to only the ones that are still eligible (that is, not too close to any of the previously selected trees).
-set.seed(111)
-t1 <- randomsample(cat1, 1)
-adults_cycle <- data.frame()
-for (i in 1:nrow(adults_remaining)){
-  if (measure(t1$gps_w, t1$gps_n, adults_remaining[i,]$gps_w, adults_remaining[i,]$gps_n) > 10){
-    adults_cycle <- rbind(adults_cycle, adults_remaining[i,])
-  }
-}
-adults_remaining <- adults_cycle
-totalsample <- rbind(totalsample, t1)
-set.seed(111)
-t1 <- randomsample(cat2, 1)
-adults_cycle <- data.frame()
-for (i in 1:nrow(adults_remaining)){
-  if (measure(t1$gps_w, t1$gps_n, adults_remaining[i,]$gps_w, adults_remaining[i,]$gps_n) > 10){
-    adults_cycle <- rbind(adults_cycle, adults_remaining[i,])
-  }
-}
-adults_remaining <- adults_cycle
-totalsample <- rbind(totalsample, t1)
-set.seed(111)
+set.seed(5005)
 t1 <- randomsample(cat3, 1)
 adults_cycle <- data.frame()
 for (i in 1:nrow(adults_remaining)){
-  if (measure(t1$gps_w, t1$gps_n, adults_remaining[i,]$gps_w, adults_remaining[i,]$gps_n) > 10){
+  if (measure(t1$gps_w, t1$gps_n, adults_remaining[i,]$gps_w, adults_remaining[i,]$gps_n) > 20){
     adults_cycle <- rbind(adults_cycle, adults_remaining[i,])
   }
 }
 adults_remaining <- adults_cycle
 totalsample <- rbind(totalsample, t1)
-set.seed(111)
+set.seed(5005)
+t1 <- randomsample(cat1, 1)
+adults_cycle <- data.frame()
+for (i in 1:nrow(adults_remaining)){
+  if (measure(t1$gps_w, t1$gps_n, adults_remaining[i,]$gps_w, adults_remaining[i,]$gps_n) > 20){
+    adults_cycle <- rbind(adults_cycle, adults_remaining[i,])
+  }
+}
+adults_remaining <- adults_cycle
+totalsample <- rbind(totalsample, t1)
+set.seed(5005)
+t1 <- randomsample(cat2, 1)
+adults_cycle <- data.frame()
+for (i in 1:nrow(adults_remaining)){
+  if (measure(t1$gps_w, t1$gps_n, adults_remaining[i,]$gps_w, adults_remaining[i,]$gps_n) > 20){
+    adults_cycle <- rbind(adults_cycle, adults_remaining[i,])
+  }
+}
+adults_remaining <- adults_cycle
+totalsample <- rbind(totalsample, t1)
+set.seed(5005)
 t1 <- randomsample(cat4, 1)
 adults_cycle <- data.frame()
 for (i in 1:nrow(adults_remaining)){
-  if (measure(t1$gps_w, t1$gps_n, adults_remaining[i,]$gps_w, adults_remaining[i,]$gps_n) > 10){
+  if (measure(t1$gps_w, t1$gps_n, adults_remaining[i,]$gps_w, adults_remaining[i,]$gps_n) > 20){
     adults_cycle <- rbind(adults_cycle, adults_remaining[i,])
   }
 }
@@ -116,6 +116,14 @@ cat4 <- adults_remaining %>%  filter(adult_percent_live_canopy > 70 & live_adult
 #retrieve tree IDs for the proposed sample
 totalsample$number
 #This gives me the list of trees to sample at ILM for the associate trees analysis!
+
+#this creates a matrix of the distances between trees to ensure we aren't getting an autocorrelated sample.
+distances <- data.frame()
+for (i in 1:52){
+  for (j in 1:52){
+    distances[i,j] <- measure(totalsample[i,4], totalsample[i,3], totalsample[j,4], totalsample[j,3])
+  }
+}
 
 #------------------------------
 #TESTING FOR REPRESENTATIVENESS
